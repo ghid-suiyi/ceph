@@ -340,7 +340,7 @@ CHECK_SYMBOL_EXISTS(curl_multi_wait curl/curl.h HAVE_CURL_MULTI_WAIT)
 find_package(OpenSSL REQUIRED)
 set(CRYPTO_LIBS OpenSSL::Crypto)
 
-option(WITH_DPDK "Enable DPDK messaging" OFF)
+option(WITH_DPDK "Enable DPDK messaging" ON)
 if(WITH_DPDK)
   find_package(dpdk)
   if(NOT DPDK_FOUND)

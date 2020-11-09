@@ -347,7 +347,7 @@ class DPDKQueuePair {
    public:
     tx_buf(tx_buf_factory& fc) : _fc(fc) {
 
-      _buf_physaddr = _mbuf.buf_physaddr;
+      _buf_physaddr = _mbuf.buf_iova;
       _data_off     = _mbuf.data_off;
     }
 
@@ -360,7 +360,7 @@ class DPDKQueuePair {
 
       // Set the mbuf to point to our data
       _mbuf.buf_addr           = va;
-      _mbuf.buf_physaddr       = pa;
+      _mbuf.buf_iova           = pa;
       _mbuf.data_off           = 0;
       _is_zc                   = true;
     }
@@ -385,7 +385,7 @@ class DPDKQueuePair {
       }
 
       // Restore the rte_mbuf fields we trashed in set_zc_info()
-      _mbuf.buf_physaddr = _buf_physaddr;
+      _mbuf.buf_iova     = _buf_physaddr;
       _mbuf.buf_addr     = rte_mbuf_to_baddr(&_mbuf);
       _mbuf.data_off     = _data_off;
 
@@ -409,7 +409,7 @@ class DPDKQueuePair {
 
    private:
     struct rte_mbuf _mbuf;
-    MARKER private_start;
+    void* private_start;
     Tub<Packet> _p;
     phys_addr_t _buf_physaddr;
     uint16_t _data_off;
@@ -417,7 +417,7 @@ class DPDKQueuePair {
     bool _is_zc = false;
     // buffers' factory the buffer came from
     tx_buf_factory& _fc;
-    MARKER private_end;
+    void* private_end;
   };
 
   class tx_buf_factory {
@@ -612,7 +612,7 @@ class DPDKQueuePair {
     // actual data buffer.
     //
     m->buf_addr      = (char*)data - RTE_PKTMBUF_HEADROOM;
-    m->buf_physaddr  = rte_mem_virt2phy(data) - RTE_PKTMBUF_HEADROOM;
+    m->buf_iova      = rte_mem_virt2phy(data) - RTE_PKTMBUF_HEADROOM;
     return true;
   }
 
@@ -839,7 +839,7 @@ class DPDKDevice {
     return sub;
   }
   ethernet_address hw_address() {
-    struct ether_addr mac;
+    struct rte_ether_addr mac;
     rte_eth_macaddr_get(_port_idx, &mac);
 
     return mac.addr_bytes;

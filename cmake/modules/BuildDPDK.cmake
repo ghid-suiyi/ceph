@@ -82,11 +82,15 @@ function(do_build_dpdk dpdk_dir)
     set(dpdk_source_dir ${CMAKE_SOURCE_DIR}/src/spdk/dpdk)
   endif()
 
+  set(dpdk_source_dir ${CMAKE_SOURCE_DIR}/src/dpdk)
+
   include(ExternalProject)
   ExternalProject_Add(dpdk-ext
     SOURCE_DIR ${dpdk_source_dir}
-    CONFIGURE_COMMAND ${make_cmd} config O=${dpdk_dir} T=${target}
-    BUILD_COMMAND ${make_cmd} O=${dpdk_dir} CC=${CMAKE_C_COMPILER} EXTRA_CFLAGS=-fPIC
+    #CONFIGURE_COMMAND ${make_cmd} config O=${dpdk_dir} T=${target}
+    CONFIGURE_COMMAND meson --prefix=${dpdk_dir}/target ${dpdk_dir}
+    #BUILD_COMMAND ${make_cmd} O=${dpdk_dir} CC=${CMAKE_C_COMPILER} EXTRA_CFLAGS=-fPIC
+    BUILD_COMMAND cd ${dpdk_dir} && ninja && ninja install
     BUILD_IN_SOURCE 1
     INSTALL_COMMAND "true")
   if(NUMA_FOUND)
@@ -103,7 +107,7 @@ function(do_build_dpdk dpdk_dir)
 endfunction()
 
 function(do_export_dpdk dpdk_dir)
-  set(DPDK_INCLUDE_DIR ${dpdk_dir}/include)
+  set(DPDK_INCLUDE_DIR ${dpdk_dir}/target/include)
   # create the directory so cmake won't complain when looking at the imported
   # target
   file(MAKE_DIRECTORY ${DPDK_INCLUDE_DIR})
@@ -119,6 +123,7 @@ function(do_export_dpdk dpdk_dir)
   list(APPEND dpdk_components
     bus_pci
     eal
+    ethdev
     kvargs
     mbuf
     mempool
@@ -126,31 +131,31 @@ function(do_export_dpdk dpdk_dir)
     pci
     ring
     telemetry)
-  if(Seastar_DPDK)
+  #if(Seastar_DPDK)
     list(APPEND dpdk_components
       bus_vdev
       cfgfile
       hash
       net
-      pmd_bnxt
-      pmd_cxgbe
-      pmd_e1000
-      pmd_ena
-      pmd_enic
-      pmd_i40e
-      pmd_ixgbe
-      pmd_nfp
-      pmd_qede
-      pmd_ring
-      pmd_sfc_efx
+      net_bnxt
+      net_cxgbe
+      net_e1000
+      net_ena
+      net_enic
+      net_i40e
+      net_ixgbe
+      net_nfp
+      net_qede
+      net_ring
+      net_sfc
       timer)
-  endif()
+  #endif()
 
   foreach(c ${dpdk_components})
     add_library(dpdk::${c} STATIC IMPORTED)
     add_dependencies(dpdk::${c} dpdk-ext)
     set(dpdk_${c}_LIBRARY
-      "${dpdk_dir}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}rte_${c}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+      "${dpdk_dir}/target/lib/x86_64-linux-gnu/${CMAKE_STATIC_LIBRARY_PREFIX}rte_${c}${CMAKE_STATIC_LIBRARY_SUFFIX}")
     set_target_properties(dpdk::${c} PROPERTIES
       INTERFACE_INCLUDE_DIRECTORIES ${DPDK_INCLUDE_DIR}
       INTERFACE_LINK_LIBRARIES dpdk::cflags
