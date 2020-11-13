@@ -52,12 +52,7 @@ class eal {
   static std::list<std::function<void()>> funcs;
   static int init(CephContext *c);
   static void execute_on_master(std::function<void()> &&f) {
-    bool done = false;
-    std::unique_lock<std::mutex> l(lock);
-    funcs.emplace_back([&]() { f(); done = true; });
-    cond.notify_all();
-    while (!done)
-      cond.wait(l);
+    f();
   }
   /**
    * Returns the amount of memory needed for DPDK

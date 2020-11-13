@@ -926,6 +926,7 @@ DPDKQueuePair::tx_buf_factory::tx_buf_factory(CephContext *c,
       lderr(cct) << __func__ << " Failed to create mempool for Tx" << dendl;
       ceph_abort();
     }
+
     if (rte_eth_tx_queue_setup(dev->port_idx(), qid, default_ring_size,
                                rte_eth_dev_socket_id(dev->port_idx()),
                                dev->def_tx_conf()) < 0) {

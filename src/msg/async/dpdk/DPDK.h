@@ -43,7 +43,6 @@
 #include "net.h"
 #include "toeplitz.h"
 
-
 struct free_deleter {
   void operator()(void* p) { ::free(p); }
 };

@@ -122,20 +122,28 @@ function(do_export_dpdk dpdk_dir)
 
   list(APPEND dpdk_components
     bus_pci
+    bus_vmbus
     eal
     ethdev
     kvargs
     mbuf
     mempool
+    mempool_bucket
     mempool_ring
+    meter
+    net
+    net_netvsc
     pci
     ring
     telemetry)
-  #if(Seastar_DPDK)
+  if(Seastar_DPDK)
     list(APPEND dpdk_components
       bus_vdev
+      bus_vmbus
       cfgfile
+      common_sfc_efx
       hash
+     
       net
       net_bnxt
       net_cxgbe
@@ -144,12 +152,14 @@ function(do_export_dpdk dpdk_dir)
       net_enic
       net_i40e
       net_ixgbe
+      net_netvsc
       net_nfp
       net_qede
       net_ring
       net_sfc
+      net_vdev_netvsc
       timer)
-  #endif()
+  endif()
 
   foreach(c ${dpdk_components})
     add_library(dpdk::${c} STATIC IMPORTED)
@@ -174,7 +184,7 @@ function(do_export_dpdk dpdk_dir)
   set_target_properties(dpdk::dpdk PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES ${DPDK_INCLUDE_DIR}
     INTERFACE_LINK_LIBRARIES
-    "-Wl,--whole-archive $<JOIN:${DPDK_ARCHIVES}, > -Wl,--no-whole-archive ${dpdk_numa} -Wl,-lpthread,-ldl")
+    "-Wl,--whole-archive ${dpdk_net_netvsc_LIBRARY} ${dpdk_mempool_ring_LIBRARY} -Wl,--no-whole-archive $<JOIN:${DPDK_ARCHIVES}, > -Wl,--no-whole-archive ${dpdk_numa} -Wl,-lpthread,-ldl")
   if(dpdk_rte_CFLAGS)
     set_target_properties(dpdk::dpdk PROPERTIES
       INTERFACE_COMPILE_OPTIONS "${dpdk_rte_CFLAGS}")

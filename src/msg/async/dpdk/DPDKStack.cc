@@ -78,6 +78,8 @@ void DPDKWorker::initialize()
   if (i == 0) {
     // Hardcoded port index 0.
     // TODO: Inherit it from the opts
+    // FIXME: If create_dpdk_net_device finds no device, there will be EAL error message,
+    // and the program is not able to wake up.
     cores = cct->_conf->ms_async_op_threads;
     std::unique_ptr<DPDKDevice> dev = create_dpdk_net_device(
         cct, cores, cct->_conf->ms_dpdk_port_id,
@@ -97,6 +99,7 @@ void DPDKWorker::initialize()
   ceph_assert(sdev);
   if (i < sdev->hw_queues_count()) {
     auto qp = sdev->init_local_queue(cct, &center, cct->_conf->ms_dpdk_hugepages, i);
+   
     std::map<unsigned, float> cpu_weights;
     for (unsigned j = sdev->hw_queues_count() + i % sdev->hw_queues_count();
          j < cores; j+= sdev->hw_queues_count())

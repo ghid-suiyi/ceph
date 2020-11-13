@@ -142,7 +142,7 @@ void NetworkStack::start()
   started = true;
   lk.unlock();
 
-  for (unsigned i = 0; i < num_workers; ++i)
+  for (unsigned i = 0; i < num_workers; ++i) 
     workers[i]->wait_for_init();
 }
 
