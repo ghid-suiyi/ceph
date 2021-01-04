@@ -300,14 +300,14 @@ int DPDKDevice::init_port_start()
   // Set Rx checksum checking
   if ((_dev_info.rx_offload_capa & DEV_RX_OFFLOAD_IPV4_CKSUM) &&
       (_dev_info.rx_offload_capa & DEV_RX_OFFLOAD_TCP_CKSUM)) {
-    ldout(cct, 1) << __func__ << " RX checksum offload supported" << dendl;
-    port_conf.rxmode.offloads |= DEV_RX_OFFLOAD_CHECKSUM;
-    _hw_features.rx_csum_offload = 1;
+    //ldout(cct, 1) << __func__ << " RX checksum offload supported" << dendl;
+    //port_conf.rxmode.offloads |= DEV_RX_OFFLOAD_CHECKSUM;
+    //_hw_features.rx_csum_offload = 1;
   }
 
   if ((_dev_info.tx_offload_capa & DEV_TX_OFFLOAD_IPV4_CKSUM)) {
-    ldout(cct, 1) << __func__ << " TX ip checksum offload supported" << dendl;
-    _hw_features.tx_csum_ip_offload = 1;
+    //ldout(cct, 1) << __func__ << " TX ip checksum offload supported" << dendl;
+    //_hw_features.tx_csum_ip_offload = 1;
   }
 
   // TSO is supported starting from DPDK v1.8
@@ -324,8 +324,8 @@ int DPDKDevice::init_port_start()
           !(_dev_info.tx_offload_capa & DEV_TX_OFFLOAD_TCP_CKSUM));
 
   if (_dev_info.tx_offload_capa & DEV_TX_OFFLOAD_TCP_CKSUM) {
-    ldout(cct, 1) << __func__ << " TX TCP checksum offload supported" << dendl;
-    _hw_features.tx_csum_l4_offload = 1;
+    //ldout(cct, 1) << __func__ << " TX TCP checksum offload supported" << dendl;
+    //_hw_features.tx_csum_l4_offload = 1;
   }
 
   int retval;

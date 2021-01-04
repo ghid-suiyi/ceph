@@ -310,9 +310,7 @@ void ipv4::send(ipv4_address to, ip_protocol_num proto_num,
       csum.sum(reinterpret_cast<char*>(iph), sizeof(*iph));
       iph->csum = csum.get();
     }
-
-    _packetq.push_back(
-            l3_protocol::l3packet{eth_protocol_num::ipv4, e_dst, std::move(pkt)});
+    _packetq.push_back(l3_protocol::l3packet{eth_protocol_num::ipv4, e_dst, std::move(pkt)});
   };
 
   if (needs_frag) {
