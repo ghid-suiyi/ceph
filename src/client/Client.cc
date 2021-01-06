@@ -10152,7 +10152,7 @@ int Client::_fsync(Inode *in, bool syncdataonly)
     _flush(in, object_cacher_completion.get());
     ldout(cct, 15) << "using return-valued form of _fsync" << dendl;
   }
-  
+
   if (!syncdataonly && in->dirty_caps) {
     check_caps(in, CHECK_CAPS_NODELAY|CHECK_CAPS_SYNCHRONOUS);
     if (in->flushing_caps)
@@ -10194,7 +10194,7 @@ int Client::_fsync(Inode *in, bool syncdataonly)
     ldout(cct, 8) << "ino " << in->ino << " failed to commit to disk! "
 		  << cpp_strerror(-r) << dendl;
   }
-   
+
   lat = ceph_clock_now();
   lat -= start;
   logger->tinc(l_c_fsync, lat);

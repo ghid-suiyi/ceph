@@ -2238,6 +2238,7 @@ bool ObjectCacher::flush_set(ObjectSet *oset, vector<ObjectExtent>& exv,
   ceph_assert(ceph_mutex_is_locked(lock));
   ceph_assert(trace != nullptr);
   ceph_assert(onfinish != NULL);
+
   if (oset->objects.empty()) {
     ldout(cct, 10) << "flush_set on " << oset << " dne" << dendl;
     onfinish->complete(0);

@@ -312,8 +312,8 @@ int DPDKDevice::init_port_start()
 
   // TSO is supported starting from DPDK v1.8
   if (_dev_info.tx_offload_capa & DEV_TX_OFFLOAD_TCP_TSO) {
-    ldout(cct, 1) << __func__ << " TSO is supported" << dendl;
-    _hw_features.tx_tso = 1;
+    //ldout(cct, 1) << __func__ << " TSO is supported" << dendl;
+    //_hw_features.tx_tso = 1;
   }
 
   // Check that Tx TCP CSUM features are either all set all together
